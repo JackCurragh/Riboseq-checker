@@ -32,7 +32,7 @@ def collapse(infile, outfile):
 
     read_number = 1
     for seq, vals in unique_reads.items():
-        f.write(f'@read{read_number}_x{vals["count"]}\n')
+        f.write(f'>read{read_number}_x{vals["count"]}\n')
         f.write(f"{seq}\n")
         read_number += 1
 
@@ -40,7 +40,7 @@ def collapse(infile, outfile):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', help='path to input FASTQ file')
-    parser.add_argument('-o', help='path to output collapsed FASTQ file (add .gz to the end to compress)')
+    parser.add_argument('-o', help='path to output collapsed FASTA file (add .gz to the end to compress)')
 
     args = parser.parse_args()
     collapse(args.i, args.o)
