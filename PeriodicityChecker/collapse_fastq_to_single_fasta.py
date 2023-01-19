@@ -3,19 +3,22 @@ import gzip
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 
-def collapse(infile, outfile):
+def collapse(fastq: str, fasta: str) -> str:
+    '''
+    Collapse a FASTQ file to a FASTA file with read counts in the header.
+    '''
     # Store the unique reads in a dictionary with their counts
     unique_reads = {}
 
     # Open the FASTQ file for reading, handling gzip if necessary
     # by checking the magic number at the beginning of the file
-    with open(infile, 'rb') as f:
+    with open(fastq, 'rb') as f:
         magic_number = f.read(2)
         if magic_number == b'\x1f\x8b':
-            f = gzip.open(infile, 'rt')
+            f = gzip.open(fastq, 'rt')
         else:
             f.seek(0)
-            f = open(infile, 'r')
+            f = open(fastq, 'r')
 
         for title, sequence, quality in FastqGeneralIterator(f):
             if sequence in unique_reads:
@@ -24,17 +27,19 @@ def collapse(infile, outfile):
                 unique_reads[sequence] = {}
                 unique_reads[sequence]['count'] = 1
 
-    # Open the FASTQ file for writing, handling gzip if necessary
-    if outfile.endswith('.gz'):
-        f = gzip.open(outfile, 'wt')
+    # Open the FASTA file for writing, handling gzip if necessary
+    if fasta.endswith('.gz'):
+        f = gzip.open(fasta, 'wt')
     else:
-        f = open(outfile, 'w')
+        f = open(fasta, 'w')
 
+    # Write the unique reads to the FASTA file
     read_number = 1
     for seq, vals in unique_reads.items():
         f.write(f'>read{read_number}_x{vals["count"]}\n')
         f.write(f"{seq}\n")
         read_number += 1
+    return fasta
 
 
 if __name__ == '__main__':
