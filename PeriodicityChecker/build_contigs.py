@@ -1,8 +1,8 @@
 import subprocess
 
 
-def build_contigs(fastq, tmp_dir, kmer_length, min_contig_length=100, 
-                     num_threads=1, inchworm_path='inchworm'):
+def build_contigs(fastq: str, tmp_dir: str, kmer_length: int, min_contig_length=100, 
+                     num_threads=1, inchworm_path='inchworm') -> str:
     '''
     wrapper to run inchworm assembler on reads
 
