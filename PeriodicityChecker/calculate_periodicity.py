@@ -20,9 +20,9 @@ def calculate(bed_path:str, output_path:str):
     with open(output_path, 'w') as f:
 
         # Initialize the output file
-        f.write('# Periodicity Checker')
-        f.write('# oeriodicity is calculated as the number of reads in the most abundant frame divided by the total number of reads')
-        f.write('contig\tframe0\tframe1\tframe2\ttotal\tperiodicity')
+        f.write('# Periodicity Checker\n')
+        f.write('# periodicity is calculated as the number of reads in the most abundant frame divided by the total number of reads\n')
+        f.write('contig\tframe0\tframe1\tframe2\ttotal\tperiodicity\n')
 
         # Iterate through each contig and calculate the periodicity
         for contig in contigs:
@@ -32,7 +32,7 @@ def calculate(bed_path:str, output_path:str):
                 if i in contig_df['start'].values:
                     frame_counts[i%3] += contig_df[contig_df['start'] == i]['count'].values[0]
             score = max(frame_counts.values()) / sum(frame_counts.values())
-            f.write(f'{contig}\t{frame_counts[0]}\t{frame_counts[1]}\t{frame_counts[2]}\t{frame_counts[0]+frame_counts[1]+frame_counts[2]}\t{score}')
+            f.write(f'{contig}\t{frame_counts[0]}\t{frame_counts[1]}\t{frame_counts[2]}\t{frame_counts[0]+frame_counts[1]+frame_counts[2]}\t{score}\n')
     f.close()
 
 if __name__ == "__main__":
