@@ -22,8 +22,14 @@ def build_contigs(fastq: str, tmp_dir: str, kmer_length: int=30, min_contig_leng
     cmd = [inchworm_path, '--reads', fastq, '--run_inchworm', '-K', str(kmer_length),
               '-L', str(min_contig_length), '--num_threads', str(num_threads), '> ', contigs]
 
-    print(cmd)
-    subprocess.call(cmd)
+
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+
+    with open(contigs, 'w') as f:
+        for line in process.stdout:
+            f.write(line)
+
+    print("Contigs outputted to ", contigs)
 
     return contigs
 

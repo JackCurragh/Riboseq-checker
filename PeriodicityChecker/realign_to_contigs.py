@@ -29,10 +29,11 @@ def algin_reads_to_contigs(reads: str, tmp_dir: str, num_threads=1) -> str:
     realign reads to contigs
     '''
     # realign reads to contigs
-    cmd = [f"bowtie", '-a', '--norc', '-p', num_threads,  '-v', 3, '--seedlen', 25, tmp_dir + '/contig_index', '-q', reads, '-S', tmp_dir + '/contigs.sam']
+    cmd = [f"bowtie", '-a', '--norc', '-p', str(num_threads),  '-v', '3', '--seedlen', '25', tmp_dir + '/contig_index', '-f', reads, '-S', tmp_dir + '/contigs.sam']
+    print(cmd)
     subprocess.call(cmd)
 
-    cmd = [f"samtools", 'sort', '-@', num_threads, tmp_dir + '/contigs.sam', '-o', tmp_dir + '/contigs.bam']
+    cmd = [f"samtools", 'sort', '-@', str(num_threads), tmp_dir + '/contigs.sam', '-o', tmp_dir + '/contigs.bam']
     subprocess.call(cmd)
 
     return tmp_dir + '/contigs.bam'
@@ -51,6 +52,6 @@ def realign(contigs: str, reads: str, tmp_dir: str, num_threads=1) -> str:
     outputs:    
         bam: path to sorted bam file
     '''
-    index_contigs(contigs, reads, tmp_dir)
+    index_contigs(contigs, tmp_dir)
     bam = algin_reads_to_contigs(reads, tmp_dir, num_threads)
     return bam
