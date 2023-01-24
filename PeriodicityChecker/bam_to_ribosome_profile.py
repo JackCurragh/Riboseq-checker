@@ -50,7 +50,6 @@ def run_offset(all_reads, offset):
 		protect_nts = sorted(read.positions)
 		if "_x" in read.qname:
 			read_count = int(read.qname.split("_x")[1])
-			print(read.qname, read_count)
 		else:
 			read_count = 1
 
@@ -114,6 +113,7 @@ def generate_profile(bam_path, fasta_path, mode="offset", offset=0, create_bw=Fa
 			all_reads = alignments.fetch(chrom)
 		except:
 			print(f"No reads fetchable from provided bam file for chromosome {chrom}. Perhaps the fasta file is not what you aligned to")
+			continue
 
 		if mode == "offset":
 			sequence = run_offset(all_reads, offset)
@@ -128,20 +128,20 @@ def generate_profile(bam_path, fasta_path, mode="offset", offset=0, create_bw=Fa
 
 	command = "sort -k1,1 -k2,2n %s > %s"%(bed_path, bed_path + ".sorted")
 	os.system(command)
+	return bed_path + ".sorted"
 
 
 if __name__ == '__main__':
     # Use the argparse module to parse the command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('bam_path', help='path to the BAM file')
-    parser.add_argument('offset', type=int, help='offset for aligning the ribosome footprints (applied to all read lengths)')
-    parser.add_argument('fasta_path', help='path to the FASTA file')
-    parser.add_argument('mode', help='\'offset\' or \'weight\'')
+    parser.add_argument('--bam_path', help='path to the BAM file')
+    parser.add_argument('--offset', type=int, help='offset for aligning the ribosome footprints (applied to all read lengths)')
+    parser.add_argument('--fasta_path', help='path to the FASTA file')
+    parser.add_argument('--mode', help='\'offset\' or \'weight\'')
     args = parser.parse_args()
 
     # Check if the BAM file is indexed, and create the index if necessary
     if not os.path.exists(args.bam_path + ".bai"):
-        print(args.bam_path)
         pysam.index(args.bam_path)
 
     # Call the main function to process the BAM LoCAM and create the BigWig file

@@ -66,7 +66,7 @@ def check_bam(bam_path, output_path, num_threads=1, offset=15) -> str:
 
     if not is_indexed(bam_path):
         print("bam file not indexed, indexing now...")
-        bam_path = index_bam(bam_path)
+        index_bam(bam_path)
 
     with open(output_path, 'w') as f:
 
@@ -83,12 +83,13 @@ def check_bam(bam_path, output_path, num_threads=1, offset=15) -> str:
         for transcript in bam.references:
             frame_counts[transcript] = {0:0, 1:0, 2:0}
             transcript_reads = bam.fetch(transcript)
+
             for read in transcript_reads:
                 if read.is_unmapped:
                     continue
                 frame_counts[transcript][(read.reference_start + offset)%3] += int(read.qname.split('_x')[1])
 
-            score = max(frame_counts[transcript].values()) / sum(frame_counts[transcript].values())
+            score = max(frame_counts[transcript].values()) / (max(sum(frame_counts[transcript].values()), 1))
             f.write(f'{transcript}\t{frame_counts[transcript][0]}\t{frame_counts[transcript][1]}\t{frame_counts[transcript][2]}\t{frame_counts[transcript][0]+frame_counts[transcript][1]+frame_counts[transcript][2]}\t{score}\n')
     f.close()   
 

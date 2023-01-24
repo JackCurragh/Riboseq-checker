@@ -34,7 +34,7 @@ def run_agnostic(args, fa_path):
     bed = generate_profile(bam, contigs, offset=15)
 
     # calculate periodicity
-    periodicity = calculate(bed, contigs)
+    periodicity = calculate(bed, f"{args.output}/periodicity.txt")
     return periodicity
 
 
@@ -51,10 +51,7 @@ def run_organism(args, fa_path):
 
     '''
     # get the path to the reference
-    if args.f:
-        reference_path = args.f
-    else:
-        reference_path = args.fasta
+    reference_path = args.fasta
 
     # align reads to reference
     bam = realign(reference_path, fa_path, args.output)
@@ -89,11 +86,11 @@ def main(args):
 
 
     if args.agnostic:
-        collapsed_fa_path = collapse(args.i, args.output + '/collapsed.fa')
+        collapsed_fa_path = collapse(args.fastq, args.output + '/collapsed.fa')
         periodicity = run_agnostic(args, collapsed_fa_path)
 
     elif args.organism:
-        collapsed_fa_path = collapse(args.i, args.output + '/collapsed.fa')
+        collapsed_fa_path = collapse(args.fastq, args.output + '/collapsed.fa')
         periodicity = run_organism(args, collapsed_fa_path)
 
     elif args.bam:
@@ -113,18 +110,6 @@ if __name__ == "__main__":
     3. Check the periodicity of a BAM file (already aligned)
     '''
 
-    # parser = argparse.ArgumentParser(description='Periodicity checker')
-    # parser.add_argument('-A', type=str, help='Mode A: "Reference Agnostic" - Check the periodicity of a single fastq file without knowing the organism of origin')
-    # parser.add_argument('-O', type=str, help='Mode O: "Organism Known" - Check the periodicity of a single fastq file knowing the organism of origin')
-
-    # parser.add_argument('-i', type=str, help='Input fastq')
-    # parser.add_argument('-o', type=str, help='Output directory')
-
-    # parser.add_argument('-v', type=str, default=False, help='Verbose')
-    # args = parser.parse_args()
-    # main(args)
-
-
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-A", "--agnostic", action="store_true", help='Mode A: "Agnostic" - Check the periodicity of a single fastq file without knowing the organism of origin')
@@ -136,13 +121,12 @@ if __name__ == "__main__":
     parser.add_argument('--output', type=str, help='Output directory')
 
     args = parser.parse_args()
-    print(args)
 
-    if args.agnostic and not args.q:
-        parser.error("-A mode requires -f option.")
-    if args.organism and (not args.q or not args.g or not args.f):
-        parser.error("-O mode requires -f, -q and -g options.")
+    if args.agnostic and not args.fastq:
+        parser.error("-A mode requires -q/--fastq option.")
+    if args.organism and (not args.fastq or not args.fasta):
+        parser.error("-O mode requires -f/--fasta, -q/--fastq options.")
     if args.BAM and not args.bam:
-        parser.error("-B mode requires -b option.")
+        parser.error("-B mode requires -b/--bam option.")
 
     main(args)

@@ -31,7 +31,7 @@ def calculate(bed_path:str, output_path:str):
             for i in range(1, max(contig_df['start'])):
                 if i in contig_df['start'].values:
                     frame_counts[i%3] += contig_df[contig_df['start'] == i]['count'].values[0]
-            score = max(frame_counts.values()) / sum(frame_counts.values())
+            score = max(frame_counts.values()) / (max(sum(frame_counts.values()), 1))
             f.write(f'{contig}\t{frame_counts[0]}\t{frame_counts[1]}\t{frame_counts[2]}\t{frame_counts[0]+frame_counts[1]+frame_counts[2]}\t{score}\n')
     f.close()
 
