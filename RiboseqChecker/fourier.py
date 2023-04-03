@@ -15,7 +15,7 @@ def plot_profile(name, frame_counts):
     '''
     for i, frame in enumerate(frame_counts):
         plt.plot(frame_counts[frame], label=f'Frame {i}')
-    # print(frame_counts)
+
     score = max(sum(frame_counts[frame]) for frame in frame_counts) / sum(sum(frame_counts[frame]) for frame in frame_counts)
     tx_name = name.split('|')[0]
     plt.title(f'{tx_name}\n{score}')
@@ -29,9 +29,7 @@ def plot_fourier(fftfreq_result, frequency_amplitudes):
     '''
     Visualise a fourier transform of a signal using matplotlib
     '''
-    # Plot the frequency amplitudes
     plt.plot(fftfreq_result, frequency_amplitudes, marker='o')
-    # plt.xlim(0,0.5)
     plt.xlabel("Frequency")
     plt.ylabel("Amplitude")
     plt.show()
@@ -76,7 +74,6 @@ def fourier(counts):
                     raise ValueError('Y also equals min')
 
     return 0
-    # print(max(pos_result), np.argmax(pos_result), fftfreq_result[round(len(frequency_amplitudes)/2)])
 
 def sort_dict_by_value(d):
     '''
@@ -88,8 +85,6 @@ def main(args):
     '''
     Main function to bridge between argparse and the rest of the code.
     '''
-    # Read in the bed file
-
     df = pd.read_csv(args.bed, sep="\t", header=None, names=['contig', 'start', 'end', 'count'])
 
     # Extract the start positions
